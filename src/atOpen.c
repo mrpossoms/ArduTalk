@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <errno.h>
+#include <assert.h>
 
 struct termios _AT_OLD_CONFIG;
 int _AT_LIB_CONF;
@@ -37,6 +38,14 @@ void atConfig(int fd, int flags){
 
 		tcgetattr(fd, &conf);
 		cfmakeraw(&conf);
+		printf("%x\n", conf.c_iflag);
+		conf.c_iflag |= IGNBRK;
+		conf.c_cflag |= CLOCAL;
+		// no hardware flow control
+		conf.c_cflag &= ~CRTSCTS;
+		// no software flow control  
+		conf.c_iflag &= ~(IXON | IXOFF | IXANY);
+		printf("%x\n", conf.c_iflag);
 		tcsetattr(fd, TCSANOW, &conf);
 	}
 }
@@ -51,10 +60,12 @@ int atOpen(const char* dev, speed_t baud){
 	_AT_LIB_CONF = 0;
 
 	// try to open the port, set errno if it fails
-	if((fd = open(dev, O_RDWR | O_NOCTTY)) < 0){
+	if((fd = open(dev, O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
 		errno = AT_ERR_UNABLE_TO_OPEN;
 		return fd;		
 	}
+
+	assert(isatty(fd));
 
 	printf("fd: %d\n", fd);
 

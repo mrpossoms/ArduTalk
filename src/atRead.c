@@ -40,7 +40,7 @@ int atRead(int fd, void* dst, size_t size){
 	if(AT_IS_BINARY) assert(bytes >= size);
 	
 #ifdef DEBUG_READ
-	printf("atRead() got %d bytes\n", _AT_LAST_SIZE);
+	printf("\natRead() got %d bytes\n", _AT_LAST_SIZE);
 	{
 		int i = 0;
 

@@ -25,7 +25,8 @@ tests: testlib
 	gcc $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lardutalk
 	gcc $(TST)/write.c -o $(TST)/bin/write.bin -lardutalk
 	gcc $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lardutalk
-	#gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
+	gcc $(TST)/stream.c -o $(TST)/bin/stream.bin -lardutalk
+#gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
 package:
 	make
 	mkdir -p $(DST)/include
