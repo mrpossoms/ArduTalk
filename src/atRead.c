@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <strings.h>
 #include <unistd.h>
+#include <assert.h>
 
 #define START_SYMBOL 1
 #define NEW_LINE     1
@@ -34,6 +35,9 @@ int atRead(int fd, void* dst, size_t size){
 		if(AT_IS_BINARY || msg[0] == '$') break;
 		else if (bytes == size) break;
 	}
+
+	// we must assure we are getting the number of bytes expected
+	if(AT_IS_BINARY) assert(bytes >= size);
 	
 #ifdef DEBUG_READ
 	printf("atRead() got %d bytes\n", _AT_LAST_SIZE);
@@ -51,7 +55,6 @@ int atRead(int fd, void* dst, size_t size){
 		printf("]]\n");
 	}
 #endif
-
 	// Only decode if not using binary messaging
 	if(!AT_IS_BINARY)
 	atDecode(_read, size + (AT_IS_NON_CRC ? 0 : CHECKSUM), msg);
@@ -71,5 +74,6 @@ int atRead(int fd, void* dst, size_t size){
 #ifdef DEBUG_READ
 	printf("atRead() %d bytes decoded %s\n", bytes, msg);
 #endif
+	usleep(1000);
 	return bytes;
 };

@@ -24,6 +24,7 @@ int atWrite(int fd, void* src, size_t size){
 	if(AT_IS_BINARY) msgSize = size + (AT_IS_NON_CRC ? 0 : 1);
 
 #ifdef DEBUG_WRITE
+	printf("VVVVVVVVVVVVVVVVVVVVVVVVV\n");
 	printf("atWrite() About to set port settings\n");
 #endif
 
@@ -40,16 +41,18 @@ int atWrite(int fd, void* src, size_t size){
 	memcpy(_src, src, size);
 	
 	if(!AT_IS_NON_CRC) _src[size] = atChecksum(src, size);
-	if(!AT_IS_BINARY) atEncode(_src, size + CHECKSUM, hex);
+	if(!AT_IS_BINARY) atEncode(_src, size + (AT_IS_NON_CRC ? 0 : CHECKSUM), hex);
 	else memcpy(hex, _src, msgSize);
 
 #ifdef DEBUG_WRITE
-	printf("Writing %s %zu\n", hex, msgSize);
+	printf("Writing %zu ", msgSize);
+	write(1, hex, msgSize);
 #endif
 
 	write(fd, hex, msgSize);
 #ifdef DEBUG_WRITE
 	printf("atWrite() written\n");
+	printf("^^^^^^^^^^^^^^^^^^^^^^^^^\n");
 #endif
 	return bytes;
 };
