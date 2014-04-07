@@ -20,8 +20,9 @@ testlib: $(SRC)
 			rm *.o
 
 tests: testlib
-	echo "=============="
 	$(foreach test, $(TSTS), echo $(test);)
+	gcc -L$(TST)/lib -I$(INC) $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lArduTalk
+	gcc -L$(TST)/lib -I$(INC) $(TST)/write.c -o $(TST)/bin/write.bin -lArduTalk
 	#gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
 install:
 	echo 'This will install the library'

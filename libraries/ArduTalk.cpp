@@ -57,7 +57,6 @@ int ArduTalk::_encode(void* src, int size, char* hex){
 	for(i = 0; i < size; i++){
 		sprintf(&hex[1 + (i << 1)], "%02x ", ((uint8_t*)src) + i); 
 	}
-	hex[1 + (size << 1)] = '\n'; // set the newline
 	
 	return 0;
 }

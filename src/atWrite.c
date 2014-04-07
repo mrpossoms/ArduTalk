@@ -2,7 +2,6 @@
 #include "atDecEnc.h"
 #include <stdio.h>
 #include <termios.h>
-//#include <fcntl.h>
 #include <strings.h>
 #include <unistd.h>
 
@@ -13,11 +12,8 @@ int atWrite(int fd, void* src, size_t size){
 
 	// update serial settings if the message size
 	// has changed since last sent
-	tcgetattr(fd, &conf);
 	// wait for the bang, and newline
-	conf.c_cc[VMIN] = 2;
-	tcsetattr(fd, TCSANOW, &conf);
-
+	atPrepare(fd, 2);
 
 	// encode, and write the message
 	atEncode(src, size, hex);

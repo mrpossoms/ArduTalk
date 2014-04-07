@@ -1,4 +1,5 @@
 #include "atOpen.h"
+#include "atPrepare.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <termios.h>
@@ -8,6 +9,7 @@ struct termios _AT_OLD_CONFIG;
 
 void _setPortConf(struct termios *conf, int fd, speed_t baud){
 	// set speeds
+	_AT_BAUD = baud;
 	cfsetospeed(conf, baud);
 	cfsetispeed(conf, baud);
 
@@ -20,7 +22,6 @@ void _setPortConf(struct termios *conf, int fd, speed_t baud){
 
 	// set to cannonical mode don't use timer
 	conf->c_lflag = ICANON;
-	conf->c_cc[VTIME] = 0;
 
 	// flush port, apply settings
 	tcflush(fd, TCIOFLUSH);
