@@ -1,43 +1,46 @@
 #include "ArduTalk.h"
 
-ArduTalk::ArduTalk(int baud){
-	Serial.begin(baud);
+ArduTalk::ArduTalk(Stream* serial, int baud){
+	_serial = serial;
 }
 //------------------------------------------------------
 int ArduTalk::Read(void* dst, int size){
-	int msgSize = 1 + (size << 1);
+	int msgSize = size << 1, bytes = 0;
 	char hex[msgSize];
 
 	// wait for the beginning of a transmission
-	Serial.readBytesUntil('$', hex, msgSize);
+	_serial->readBytesUntil('$', hex, msgSize);
+	Serial.write(hex, msgSize);
 
-	// read to the end of line
-	Serial.readBytesUntil('\n', hex, msgSize);
+	// continue reading until expected data is recieved
+	do{
+		// read to the end of line
+		bytes = _serial->readBytesUntil('\n', hex, msgSize);
+	}while(bytes != msgSize);
 
 	// decode the hex string back into binary
 	_decode(dst, size, hex);
 
 	// TODO checksum
-	Serial.println("!"); // send ack
+	_serial->println("!"); // send ack
 
 	return 0;
 }
 //------------------------------------------------------
 int ArduTalk::Write(void* src, int size){
 	int msgSize = 1 + (size << 1);
-	char hex[msgSize];
+	char hex[msgSize], ack[1];
 
 	// encode binary into hex ascii string
 	_encode(src, size, hex);
 
-	// send the message
-	Serial.println(hex);
+	do{
+		// send the message
+		_serial->println(hex);
 
-	Serial.readBytesUntil('\n', hex, 1);
-	if(hex[0] != '!'){
-		// TODO this is an error
-		return -1;
-	}
+		// wait for ack
+		_serial->readBytesUntil('\n', ack, 1);
+	}while(ack[0] != '!');
 
 	return 0;
 }

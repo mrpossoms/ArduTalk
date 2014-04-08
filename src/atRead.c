@@ -22,12 +22,11 @@ int atRead(int fd, void* dst, size_t size){
 	// has changed since last sent
 	atPerform(fd, size);
 
-	// perform the read
-	bytes = read(fd, hex, _AT_LAST_SIZE);
-	atDecode(dst, size, hex);
-
-	if((bytes = _checkMessage(hex, bytes)) < 0)
-		bzero(dst, size);	
+	// perform the read, continue reading until a message is legit
+	do{
+		bytes = read(fd, hex, _AT_LAST_SIZE);
+		atDecode(dst, size, hex);
+	}while((bytes = _checkMessage(hex, bytes)) < 0);
 
 	// send the ack
 	write(fd, "!\n", 2);

@@ -32,11 +32,15 @@ int atOpen(const char* dev, speed_t baud){
 	int fd = -1;
 	struct termios config = {0};
 
+	printf("atOpen() entered opening %s\n", dev);
+
 	// try to open the port, set errno if it fails
 	if((fd = open(dev, O_RDWR | O_NOCTTY)) < 0){
 		errno = AT_ERR_UNABLE_TO_OPEN;
 		return fd;		
 	}
+
+	printf("fd: %d\n", fd);
 
 	// save the old config settings for this port
 	tcgetattr(fd, &_AT_OLD_CONFIG);
