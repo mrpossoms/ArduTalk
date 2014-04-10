@@ -1,4 +1,5 @@
 #include "ArduTalk.h"
+#define DEBUG
 
 ArduTalk::ArduTalk(Stream* serial, int baud){
 	_serial = serial;
@@ -10,13 +11,15 @@ int ArduTalk::Read(void* dst, int size){
 
 	// wait for the beginning of a transmission
 	_serial->readBytesUntil('$', hex, msgSize);
-	Serial.write(hex, msgSize);
+#ifdef DEBUG
+	Serial.write(hex);
+#endif
 
 	// continue reading until expected data is recieved
-	do{
+	//do{
 		// read to the end of line
 		bytes = _serial->readBytesUntil('\n', hex, msgSize);
-	}while(bytes != msgSize);
+	//}while(bytes != msgSize);
 
 	// decode the hex string back into binary
 	_decode(dst, size, hex);
@@ -34,13 +37,13 @@ int ArduTalk::Write(void* src, int size){
 	// encode binary into hex ascii string
 	_encode(src, size, hex);
 
-	do{
+	//do{
 		// send the message
 		_serial->println(hex);
 
 		// wait for ack
 		_serial->readBytesUntil('\n', ack, 1);
-	}while(ack[0] != '!');
+	//}while(ack[0] != '!');
 
 	return 0;
 }

@@ -35,6 +35,8 @@ int atWrite(int fd, void* src, size_t size){
 
 		// perform the ACK read
 		bytes = read(fd, ack, 2);
+
+		printf("atWrite() read: '%s'\n", ack);
 	}while(ack[0] != '!' && bytes != 1);
 
 	return bytes;

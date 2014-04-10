@@ -20,7 +20,7 @@ int atRead(int fd, void* dst, size_t size){
 
 	// update serial settings if the message size
 	// has changed since last sent
-	atPerform(fd, size);
+	atPrepare(fd, size);
 
 	// perform the read, continue reading until a message is legit
 	do{
