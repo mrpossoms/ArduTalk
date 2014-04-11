@@ -25,7 +25,7 @@ int ArduTalk::Read(void* dst, int size){
 	_decode(dst, size, hex);
 
 	// TODO checksum
-	_serial->println("!"); // send ack
+	_serial->write((const uint8_t*)"!\n", 2); // send ack
 
 	return 0;
 }
@@ -38,8 +38,12 @@ int ArduTalk::Write(void* src, int size){
 	_encode(src, size, hex);
 
 	//do{
+#ifdef DEBUG
+		Serial.println("Writing");
+		Serial.write(hex);
+#endif
 		// send the message
-		_serial->println(hex);
+		_serial->write(hex);
 
 		// wait for ack
 		_serial->readBytesUntil('\n', ack, 1);
@@ -50,7 +54,7 @@ int ArduTalk::Write(void* src, int size){
 //------------------------------------------------------
 int ArduTalk::_decode(void* dst, int size, char* hex){
 	for(int i = 0; i < size; i++){
-		sscanf(&hex[i << 1], "%02x", ((uint8_t*)dst) + i);
+		sscanf(&hex[i << 1], "%02x", ((unsigned char*)dst) + i);
 	}
 
 	return 0;
@@ -61,8 +65,9 @@ int ArduTalk::_encode(void* src, int size, char* hex){
 
 	hex[0] = '$'; // set the start character
 	for(i = 0; i < size; i++){
-		sprintf(&hex[1 + (i << 1)], "%02x ", ((uint8_t*)src) + i); 
+		sprintf(&hex[1 + (i << 1)], "%02x ", ((char*)src)[i]); 
 	}
+	hex[1 + (size << 1)] = '\n'; // set the newline
 	
 	return 0;
 }

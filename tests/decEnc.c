@@ -1,4 +1,5 @@
 #include "atDecEnc.h"
+#include <stdio.h>
 
 typedef struct{
 	int a;

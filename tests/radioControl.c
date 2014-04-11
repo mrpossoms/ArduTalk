@@ -1,6 +1,8 @@
 #include "atOpen.h"
 #include "atWrite.h"
 #include "atRead.h"
+#include <stdio.h>
+#include <strings.h>
 
 typedef struct{
 	unsigned char rotors[4];
@@ -45,15 +47,23 @@ int main(){
 		int i = 10;
 		printf("Opened\n");
 		for(;i--;){
+			int j = 0;
+
+			t.rotors[0] = 8;
+			t.rotors[1] = 16;
+			t.rotors[2] = 32;
+			t.rotors[3] = 64;
+			t.checksum = computeChecksum(&t, sizeof(basStnMsg) - 1);
+			
 			atWrite(fd, &t, sizeof(basStnMsg));
-			//usleep(50000);
 		
 			// clear it out, and read the response
-			//bzero(&t, sizeof(basStnMsg));
+			bzero(&t, sizeof(basStnMsg));
+			//usleep(500000);
 			//atRead(fd, &t, sizeof(basStnMsg));
-		
-			for(i = 0; i < sizeof(basStnMsg); i++){
-				printf("%02x ", ((char*)&t)[i]);
+
+			for(j = 0; j < 4; j++){
+				printf("Rotor[%d]=%d\n", j, t.rotors[j]);
 			}
 		}
 	}

@@ -20,16 +20,19 @@ int atRead(int fd, void* dst, size_t size){
 
 	// update serial settings if the message size
 	// has changed since last sent
-	atPrepare(fd, size);
+	atPrepare(fd, 1 + (size << 1));
 
 	// perform the read, continue reading until a message is legit
-	do{
+	//do{
 		bytes = read(fd, hex, _AT_LAST_SIZE);
+		printf("--%s\n", hex);
 		atDecode(dst, size, hex);
-	}while((bytes = _checkMessage(hex, bytes)) < 0);
+
+		printf("atRead() %d bytes decoded %s\n", bytes, hex);
+	//}while(!bytes);
 
 	// send the ack
-	write(fd, "!\n", 2);
+	if(bytes) write(fd, "!\n", 2);
 
 	return bytes;
 };

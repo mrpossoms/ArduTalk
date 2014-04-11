@@ -1,5 +1,7 @@
 #include "atOpen.h"
 #include "atWrite.h"
+#include <unistd.h>
+#include <stdio.h>
 
 typedef struct{
 	unsigned char rotors[4];

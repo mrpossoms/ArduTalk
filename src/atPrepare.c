@@ -20,4 +20,6 @@ int atPrepare(int fd, size_t size){
 	conf.c_cc[VTIME] += !conf.c_cc[VTIME] ? 1 : 0;
 	conf.c_cc[VMIN] = _AT_LAST_SIZE;
 	tcsetattr(fd, TCSANOW, &conf);
+
+	return 0;
 }

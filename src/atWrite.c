@@ -25,10 +25,10 @@ int atWrite(int fd, void* src, size_t size){
 	// encode, and write the message
 	atEncode(src, size, hex);
 
-	printf("Writing %s %d\n", hex, msgSize);
+	printf("Writing %s %zu\n", hex, msgSize);
 
 	// resend message until ack'd
-	do{
+	//do{
 		write(fd, hex, msgSize);
 		printf("atWrite() written\n");
 		bzero(hex, 1024);
@@ -36,8 +36,11 @@ int atWrite(int fd, void* src, size_t size){
 		// perform the ACK read
 		bytes = read(fd, ack, 2);
 
-		printf("atWrite() read: '%s'\n", ack);
-	}while(ack[0] != '!' && bytes != 1);
+		printf("atWrite() read %d bytes ", bytes);
+		printf("%02x %02x\n",ack[0], ack[1] );
+		printf("%c %c\n",ack[0], ack[1] );
+	//}while(ack[0] != '!');
 
+	printf("atWrite() Done\n");
 	return bytes;
 };

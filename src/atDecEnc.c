@@ -1,5 +1,5 @@
 #include "atDecEnc.h"
-#include <string.h>
+#include <strings.h>
 #include <stdio.h>
 
 int atEncode(void* src, size_t size, char* hex){
