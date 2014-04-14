@@ -12,6 +12,7 @@ class ArduTalk{
 		int _AT_MSG_SIZE;
 		int _decode(void* dst, int size, char* hex);
 		int _encode(void* src, int size, char* hex);
+		unsigned char _checksum(void* data, int size);
 };
 
 #endif

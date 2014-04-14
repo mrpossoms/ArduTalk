@@ -6,7 +6,6 @@
 
 typedef struct{
 	unsigned char rotors[4];
-	unsigned char checksum;
 //	float delta[3];
 //	float thrust;
 } basStnMsg;
@@ -38,7 +37,6 @@ int main(){
 	t.rotors[1] = 16;
 	t.rotors[2] = 32;
 	t.rotors[3] = 64;
-	t.checksum = computeChecksum(&t, sizeof(basStnMsg) - 1);
 
 	int fd = atOpen("/dev/cu.usbserial-A702LY4I", 9600);
 	printf("fd %d\n", fd);
@@ -46,21 +44,21 @@ int main(){
 	if(fd > 0){
 		int i = 10;
 		printf("Opened\n");
-		for(;i--;){
-			int j = 0;
+		while(1){
+			int j = 0, speed = 0;
 
-			t.rotors[0] = 8;
-			t.rotors[1] = 16;
-			t.rotors[2] = 32;
-			t.rotors[3] = 64;
-			t.checksum = computeChecksum(&t, sizeof(basStnMsg) - 1);
+			scanf("%d", &speed);
+
+			for(j = 4; j--;){
+				t.rotors[j] = speed;
+			}
 			
 			atWrite(fd, &t, sizeof(basStnMsg));
 		
 			// clear it out, and read the response
 			bzero(&t, sizeof(basStnMsg));
 			//usleep(500000);
-			//atRead(fd, &t, sizeof(basStnMsg));
+			atRead(fd, &t, sizeof(basStnMsg));
 
 			for(j = 0; j < 4; j++){
 				printf("Rotor[%d]=%d\n", j, t.rotors[j]);

@@ -1,16 +1,21 @@
 #include "atWrite.h"
 #include "atDecEnc.h"
 #include "atPrepare.h"
+#include "atChecksum.h"
 #include <stdio.h>
 #include <termios.h>
 #include <strings.h>
 #include <unistd.h>
 
+#define START_SYMBOL 1
+#define NEW_LINE     1
+#define CHECKSUM     1
+
 int atWrite(int fd, void* src, size_t size){
 	int bytes = 0;
-	char hex[1024], ack[2]; // TODO something more intelligent perhaps?
+	size_t msgSize = ((size + CHECKSUM) << 1) + START_SYMBOL + NEW_LINE;
+	char hex[msgSize], _src[size + CHECKSUM];
 	struct termios conf = {0};
-	size_t msgSize = (size << 1) + 2;
 
 	printf("atWrite() About to set port settings\n");
 
@@ -19,28 +24,16 @@ int atWrite(int fd, void* src, size_t size){
 	// wait for the bang, and newline
 	atPrepare(fd, 2);
 
-
 	printf("atWrite() set port settings\n\tabout to encode\n");
 
 	// encode, and write the message
-	atEncode(src, size, hex);
+	memcpy(_src, src, size);
+	_src[size] = atChecksum(src, size);
+	atEncode(_src, size + CHECKSUM, hex);
 
 	printf("Writing %s %zu\n", hex, msgSize);
 
-	// resend message until ack'd
-	//do{
-		write(fd, hex, msgSize);
-		printf("atWrite() written\n");
-		bzero(hex, 1024);
-
-		// perform the ACK read
-		bytes = read(fd, ack, 2);
-
-		printf("atWrite() read %d bytes ", bytes);
-		printf("%02x %02x\n",ack[0], ack[1] );
-		printf("%c %c\n",ack[0], ack[1] );
-	//}while(ack[0] != '!');
-
-	printf("atWrite() Done\n");
+	write(fd, hex, msgSize);
+	printf("atWrite() written\n");
 	return bytes;
 };

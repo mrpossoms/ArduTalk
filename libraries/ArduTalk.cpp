@@ -1,54 +1,71 @@
 #include "ArduTalk.h"
-#define DEBUG
+//#define DEBUG
+
+#define START_SYMBOL 1
+#define NEW_LINE     1
+#define CHECKSUM     1
 
 ArduTalk::ArduTalk(Stream* serial, int baud){
 	_serial = serial;
 }
 //------------------------------------------------------
 int ArduTalk::Read(void* dst, int size){
-	int msgSize = size << 1, bytes = 0;
-	char hex[msgSize];
+	int bytes = 0;
+	int msgSize = ((size + CHECKSUM) << 1);
+	char hex[msgSize], _read[size + CHECKSUM];
 
 	// wait for the beginning of a transmission
 	_serial->readBytesUntil('$', hex, msgSize);
+
 #ifdef DEBUG
-	Serial.write(hex);
+	Serial.println("Read start char");
+	Serial.print("Reading "); Serial.print(msgSize, DEC); Serial.println(" bytes");
 #endif
 
-	// continue reading until expected data is recieved
-	//do{
-		// read to the end of line
-		bytes = _serial->readBytesUntil('\n', hex, msgSize);
-	//}while(bytes != msgSize);
+	// read to the termination character
+	bytes = _serial->readBytesUntil('\n', hex, msgSize);
+	_decode(_read, size + CHECKSUM, hex);
 
-	// decode the hex string back into binary
-	_decode(dst, size, hex);
+#ifdef DEBUG
+	Serial.write((const uint8_t*)hex, msgSize);
+#endif
 
-	// TODO checksum
-	_serial->write((const uint8_t*)"!\n", 2); // send ack
+	if(_read[size] != _checksum(_read, size)){
+		// this message is corrupted
+#ifdef DEBUG
+		Serial.println('bad checksum');
+#endif
+		return -1;
+	}
 
-	return 0;
+#ifdef DEBUG
+	Serial.println("checksum ok!");
+#endif
+
+	// The checksums match, we are good
+	memcpy(dst, _read, size);
+
+	return bytes;
 }
 //------------------------------------------------------
 int ArduTalk::Write(void* src, int size){
-	int msgSize = 1 + (size << 1);
-	char hex[msgSize], ack[1];
+	int msgSize = ((size + CHECKSUM) << 1) + START_SYMBOL + NEW_LINE;
+	char hex[msgSize + 1], _src[size + CHECKSUM];
 
-	// encode binary into hex ascii string
-	_encode(src, size, hex);
+	memset(hex, 0, msgSize + 1);
 
-	//do{
+	// encode, and write the message
+	memcpy(_src, src, size);
+	_src[size] = _checksum(src, size);
+	_encode(_src, size + CHECKSUM, hex);
+
+	// send the message
+	_serial->write((const uint8_t*)hex, msgSize);
+
 #ifdef DEBUG
-		Serial.println("Writing");
-		Serial.write(hex);
+	Serial.print("Writing "); Serial.println(msgSize, DEC);
+	Serial.print(hex);
 #endif
-		// send the message
-		_serial->write(hex);
-
-		// wait for ack
-		_serial->readBytesUntil('\n', ack, 1);
-	//}while(ack[0] != '!');
-
 	return 0;
 }
 //------------------------------------------------------
@@ -70,4 +87,14 @@ int ArduTalk::_encode(void* src, int size, char* hex){
 	hex[1 + (size << 1)] = '\n'; // set the newline
 	
 	return 0;
+}
+//------------------------------------------------------
+unsigned char ArduTalk::_checksum(void* data, int size){
+	unsigned char chksum = 0;
+
+	for(;size--;){
+		chksum ^= ((unsigned char*)data)[size];
+	}
+
+	return chksum;
 }
