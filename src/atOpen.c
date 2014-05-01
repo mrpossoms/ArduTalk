@@ -6,6 +6,7 @@
 #include <errno.h>
 
 struct termios _AT_OLD_CONFIG;
+int _AT_LIB_CONF;
 
 void _setPortConf(struct termios *conf, int fd, speed_t baud){
 	// set speeds
@@ -33,6 +34,9 @@ int atOpen(const char* dev, speed_t baud){
 	struct termios config = {0};
 
 	printf("atOpen() entered opening %s\n", dev);
+
+	// set default behavior for library
+	_AT_LIB_CONF = 0;
 
 	// try to open the port, set errno if it fails
 	if((fd = open(dev, O_RDWR | O_NOCTTY)) < 0){

@@ -1,5 +1,4 @@
-#include "atOpen.h"
-#include "atWrite.h"
+#include "ardutalk.h"
 #include <unistd.h>
 #include <stdio.h>
 

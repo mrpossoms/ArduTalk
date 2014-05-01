@@ -3,7 +3,7 @@ SRC=./src/*.c
 INC=./include
 DST=./lib
 LINK=-string
-LIB=libArduTalk.a
+LIB=libardutalk.a
 
 TSTINC=./tests/include
 TST=./tests
@@ -21,16 +21,24 @@ testlib: $(SRC)
 
 tests: testlib
 	$(foreach test, $(TSTS), echo $(test);)
-	gcc -L$(TST)/lib -I$(INC) $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lArduTalk
-	gcc -L$(TST)/lib -I$(INC) $(TST)/write.c -o $(TST)/bin/write.bin -lArduTalk
-	gcc -L$(TST)/lib -I$(INC) $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lArduTalk
+	gcc $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lArduTalk
+	gcc $(TST)/write.c -o $(TST)/bin/write.bin -lArduTalk
+	gcc $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lArduTalk
 	#gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
+package:
+	make
+	mkdir -p $(DST)/include
+	cat /dev/null >| $(DST)/include/ardutalk.h
+	find ./$(INC) -name "*.h" -exec cat {} > $(DST)/include/ardutalk.h \;
+	
 install:
-	echo 'This will install the library'
+	echo 'Installing the library'
+	cp $(DST)/include/*.h /usr/include
+	cp $(DST)/*.a /usr/lib
 clean:
 	find ./ -iname "*.a" -exec rm {} \;
-		find ./ -iname "*.o" -exec rm {} \;
-			find ./ -iname "*.out" -exec rm {} \;
+	find ./ -iname "*.o" -exec rm {} \;
+	find ./ -iname "*.out" -exec rm {} \;
 setup:
 	echo 'Setting up project'
 	mkdir $(TST) $(DST) $(INC) ./src

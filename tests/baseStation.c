@@ -20,23 +20,13 @@ unsigned char computeChecksum(void* msg, int size){
 }
 
 int main(){
-	/*
-	basStnMsg t = {
-		{0},
-		13.37f
-	};
-
-	t.delta[0] = 100.0f;
-	t.delta[1] = 33.0f;
-	t.delta[2] = 0.7f;
-	*/
 	basStnMsg t;
 	t.rotors[0] = 8;
 	t.rotors[1] = 16;
 	t.rotors[2] = 32;
 	t.rotors[3] = 64;
 
-	int fd = atOpen("/dev/cu.usbserial-A702LY4I", 9600);
+	int fd = atOpen("/dev/cu.usbserial-A702LY4I", 115200);
 	printf("fd %d\n", fd);
 
 	if(fd > 0){

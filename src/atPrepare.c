@@ -1,4 +1,5 @@
 #include "atPrepare.h"
+#include "atOpen.h"
 #include <math.h>
 
 #define START_SYMBOL 1
@@ -11,7 +12,17 @@ size_t _AT_LAST_SIZE;
 int atPrepare(int fd, size_t size){
 	struct termios conf = {0};
 
-	size = ((size + CHECKSUM) << 1) + START_SYMBOL;
+	// account for library configuration
+	if(_AT_LIB_CONF & AT_BIN){
+		// Binary message transmission
+		// check to see if checksum has been disabled
+		size += _AT_LIB_CONF & AT_NCHKSUM ? 0 : 1;
+	}
+	else{
+		// ascii message transmission
+		size = ((size + CHECKSUM) << 1) + START_SYMBOL;
+	}
+
 	if(_AT_LAST_SIZE == size) return 0;
 	
 	tcgetattr(fd, &conf);

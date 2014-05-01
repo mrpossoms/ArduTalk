@@ -1,3 +1,4 @@
+#include "atOpen.h"
 #include "atWrite.h"
 #include "atDecEnc.h"
 #include "atPrepare.h"
@@ -17,6 +18,9 @@ int atWrite(int fd, void* src, size_t size){
 	char hex[msgSize], _src[size + CHECKSUM];
 	struct termios conf = {0};
 
+	// correct message size, based on configuration
+	if(AT_IS_BINARY) msgSize = size + (AT_IS_NON_CRC ? 0 : 1);
+
 	printf("atWrite() About to set port settings\n");
 
 	// update serial settings if the message size
@@ -28,8 +32,9 @@ int atWrite(int fd, void* src, size_t size){
 
 	// encode, and write the message
 	memcpy(_src, src, size);
-	_src[size] = atChecksum(src, size);
-	atEncode(_src, size + CHECKSUM, hex);
+	
+	if(!AT_IS_NON_CRC) _src[size] = atChecksum(src, size);
+	if(!AT_IS_BINARY) atEncode(_src, size + CHECKSUM, hex);
 
 	printf("Writing %s %zu\n", hex, msgSize);
 
