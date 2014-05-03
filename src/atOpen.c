@@ -29,6 +29,18 @@ void _setPortConf(struct termios *conf, int fd, speed_t baud){
 	tcsetattr(fd, TCSANOW, conf);
 }
 //---------------------------------------------------------------
+void atConfig(int fd, int flags){
+	_AT_LIB_CONF = flags;
+
+	if(AT_IS_BINARY){
+		struct termios conf = {0};
+
+		tcgetattr(fd, &conf);
+		cfmakeraw(&conf);
+		tcsetattr(fd, TCSANOW, &conf);
+	}
+}
+//---------------------------------------------------------------
 int atOpen(const char* dev, speed_t baud){
 	int fd = -1;
 	struct termios config = {0};

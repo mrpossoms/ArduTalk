@@ -12,6 +12,8 @@
 #define NEW_LINE     1
 #define CHECKSUM     1
 
+//#define DEBUG_READ
+
 // TODO allow time out
 int atRead(int fd, void* dst, size_t size){
 	int bytes = 0, i = 0;
@@ -33,8 +35,8 @@ int atRead(int fd, void* dst, size_t size){
 		else if (bytes == size) break;
 	}
 	
+#ifdef DEBUG_READ
 	printf("atRead() got %d bytes\n", _AT_LAST_SIZE);
-
 	{
 		int i = 0;
 
@@ -48,6 +50,7 @@ int atRead(int fd, void* dst, size_t size){
 
 		printf("]]\n");
 	}
+#endif
 
 	// Only decode if not using binary messaging
 	if(!AT_IS_BINARY)
@@ -56,14 +59,17 @@ int atRead(int fd, void* dst, size_t size){
 	// compute and check checksum. If used.
 	if(!AT_IS_NON_CRC && _read[size] != atChecksum(_read, size)){
 		// this message is corrupted
+#ifdef DEBUG_READ
 		printf("atRead() - message corrupted\n");
+#endif
 		return -1;
 	}
 
 	// The checksums match, we are good
-	memcpy(dst, _read, size);
+	memcpy(dst, msg, size);
 
+#ifdef DEBUG_READ
 	printf("atRead() %d bytes decoded %s\n", bytes, msg);
-
+#endif
 	return bytes;
 };

@@ -15,6 +15,6 @@ extern struct termios _AT_OLD_CONFIG;
 extern int _AT_LIB_CONF;
 
 int  atOpen(const char* dev, speed_t baud);
-void atConfig(int flags);
+void atConfig(int fd, int flags);
 
 #endif
