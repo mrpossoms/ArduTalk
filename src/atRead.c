@@ -29,7 +29,7 @@ int atRead(int fd, void* dst, size_t size){
 	// number of bytes
 	for(i = size; i--;){
 		bytes = read(fd, msg, _AT_LAST_SIZE);
-		if(!AT_IS_BINARY && msg[0] == '$') break;
+		if(AT_IS_BINARY || msg[0] == '$') break;
 		else if (bytes == size) break;
 	}
 	
