@@ -15,6 +15,12 @@
 
 //#define DEBUG_READ
 
+size_t atAvailable(int fd){
+	size_t bytes = 0;
+	ioctl(fd, FIONREAD, &bytes);
+	return bytes;
+}
+
 // TODO allow time out
 int atRead(int fd, void* dst, size_t size){
 	int bytes = 0, i = 0;
@@ -37,7 +43,7 @@ int atRead(int fd, void* dst, size_t size){
 	}
 
 	// we must assure we are getting the number of bytes expected
-	if(AT_IS_BINARY) assert(bytes >= size);
+	//if(AT_IS_BINARY) assert(bytes >= size);
 	
 #ifdef DEBUG_READ
 	printf("\natRead() got %d bytes\n", _AT_LAST_SIZE);

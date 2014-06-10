@@ -1,18 +1,15 @@
-#ifndef AT_PREPARE
-#define AT_PREPARE
-#include <termios.h>
+#ifndef AT_CHECKSUM
+#define AT_CHECKSUM
 #include <unistd.h>
 
-extern speed_t _AT_BAUD;
-extern size_t _AT_LAST_SIZE;
-
-int atPrepare(int fd, size_t size);
+unsigned char atChecksum(void* data, size_t size);
 #endif
-#ifndef AT_WRITE
-#define AT_WRITE
+#ifndef AT_DEC_ENC
+#define AT_DEC_ENC
 #include <stdlib.h>
 
-int atWrite(int fd, void* dst, size_t size);
+int atEncode(void* src, size_t size, char* hex);
+int atDecode(void* dst, size_t size, char* hex);
 
 #endif
 #ifndef AT_OPEN
@@ -35,24 +32,29 @@ int  atOpen(const char* dev, speed_t baud);
 void atConfig(int fd, int flags);
 
 #endif
-#ifndef AT_DEC_ENC
-#define AT_DEC_ENC
-#include <stdlib.h>
-
-int atEncode(void* src, size_t size, char* hex);
-int atDecode(void* dst, size_t size, char* hex);
-
-#endif
-#ifndef AT_CHECKSUM
-#define AT_CHECKSUM
+#ifndef AT_PREPARE
+#define AT_PREPARE
+#include <termios.h>
 #include <unistd.h>
 
-unsigned char atChecksum(void* data, size_t size);
+extern speed_t _AT_BAUD;
+extern size_t _AT_LAST_SIZE;
+
+int atPrepare(int fd, size_t size);
 #endif
 #ifndef AT_READ
 #define AT_READ
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
+size_t atAvailable(int fd);
 int atRead(int fd, void* dst, size_t size);
+
+#endif
+#ifndef AT_WRITE
+#define AT_WRITE
+#include <stdlib.h>
+
+int atWrite(int fd, void* dst, size_t size);
 
 #endif
