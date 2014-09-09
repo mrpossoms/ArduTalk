@@ -16,14 +16,15 @@ all:
 
 testlib: $(SRC)
 	gcc -I$(INC) -I$(TSTINC) -c $(SRC)
-		ar rcs $(TST)/lib/$(LIB) *.o
-			rm *.o
+	mkdir -p $(TST)/lib
+	ar rcs $(TST)/lib/$(LIB) *.o
+	rm *.o
 
 tests: testlib
 	$(foreach test, $(TSTS), echo $(test);)
-	gcc $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lArduTalk
-	gcc $(TST)/write.c -o $(TST)/bin/write.bin -lArduTalk
-	gcc $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lArduTalk
+	gcc $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lardutalk
+	gcc $(TST)/write.c -o $(TST)/bin/write.bin -lardutalk
+	gcc $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lardutalk
 	#gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
 package:
 	make
