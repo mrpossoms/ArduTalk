@@ -31,8 +31,17 @@ int atPrepare(int fd, size_t size){
 	// set the timer to wait for 8 bits plus a stop bit for each byte
 	// transmitted. Multiply this by ten for the 0.1 second granularity
 	// divide by baud rate
-	conf.c_cc[VTIME] = (((size << 3) + 1) * 10) / _AT_BAUD;
-	conf.c_cc[VTIME] += !conf.c_cc[VTIME] ? 1 : 0;
+
+	// specify timeouts
+	if(_AT_LIB_CONF & AT_BLOCKING){
+		conf.c_cc[VTIME] = 20; // two second time-outs
+	}
+	else{
+		conf.c_cc[VTIME] = (((size << 3) + 1) * 10) / _AT_BAUD;
+		conf.c_cc[VTIME] += !conf.c_cc[VTIME] ? 1 : 0;
+	}
+
+	// set expected bytes and apply parameters
 	conf.c_cc[VMIN] = _AT_LAST_SIZE = size;
 	tcsetattr(fd, TCSANOW, &conf);
 

@@ -50,8 +50,9 @@ void atConfig(int fd, int flags){
 	}
 }
 //---------------------------------------------------------------
-int atOpen(const char* dev, speed_t baud){
+int atOpen(const char* dev, speed_t baud, int flags){
 	int fd = -1;
+	int isBlocking = flags & AT_BLOCKING ? O_NONBLOCK : 0;
 	struct termios config = {0};
 
 	printf("atOpen() entered opening %s\n", dev);
@@ -60,7 +61,7 @@ int atOpen(const char* dev, speed_t baud){
 	_AT_LIB_CONF = 0;
 
 	// try to open the port, set errno if it fails
-	if((fd = open(dev, O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
+	if((fd = open(dev, O_RDWR | O_NOCTTY | isBlocking)) < 0){
 		errno = AT_ERR_UNABLE_TO_OPEN;
 		return fd;		
 	}
@@ -71,8 +72,11 @@ int atOpen(const char* dev, speed_t baud){
 
 	// save the old config settings for this port
 	tcgetattr(fd, &_AT_OLD_CONFIG);
-	
-	_setPortConf(&config, fd, baud);	
+	_setPortConf(&config, fd, baud);
+
+	if(flags){	
+		atConfig(fd, flags);
+	}
 
 	return fd;
 }

@@ -9,23 +9,25 @@ TSTINC=./tests/include
 TST=./tests
 TSTS=./tests/*.c
 
+CC=gcc
+
 all:
-	gcc -I$(INC) -c $(SRC)
+	$(CC) -I$(INC) -c $(SRC)
 		ar rcs $(DST)/$(LIB) *.o
 			rm *.o
 
 testlib: $(SRC)
-	gcc -I$(INC) -I$(TSTINC) -c $(SRC)
+	$(CC) -I$(INC) -I$(TSTINC) -c $(SRC)
 	mkdir -p $(TST)/lib
 	ar rcs $(TST)/lib/$(LIB) *.o
 	rm *.o
 
 tests: testlib
 	$(foreach test, $(TSTS), echo $(test);)
-	gcc $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lardutalk
-	gcc $(TST)/write.c -o $(TST)/bin/write.bin -lardutalk
-	gcc $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lardutalk
-	gcc $(TST)/stream.c -o $(TST)/bin/stream.bin -lardutalk
+	$(CC) $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lardutalk
+	$(CC) $(TST)/write.c -o $(TST)/bin/write.bin -lardutalk
+	$(CC) $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lardutalk
+	$(CC) $(TST)/stream.c -o $(TST)/bin/stream.bin -lardutalk
 #gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
 package:
 	make

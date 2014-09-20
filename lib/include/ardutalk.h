@@ -20,6 +20,7 @@ int atDecode(void* dst, size_t size, char* hex);
 
 #define AT_BIN      0x01
 #define AT_NCHKSUM  0x02
+#define AT_BLOCKING 0x03
 
 #define AT_IS_BINARY  _AT_LIB_CONF & AT_BIN
 #define AT_IS_NON_CRC _AT_LIB_CONF & AT_NCHKSUM
@@ -28,7 +29,7 @@ int atDecode(void* dst, size_t size, char* hex);
 extern struct termios _AT_OLD_CONFIG;
 extern int _AT_LIB_CONF;
 
-int  atOpen(const char* dev, speed_t baud);
+int  atOpen(const char* dev, speed_t baud, int flags);
 void atConfig(int fd, int flags);
 
 #endif
