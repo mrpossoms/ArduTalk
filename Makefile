@@ -24,10 +24,11 @@ testlib: $(SRC)
 
 tests: testlib
 	$(foreach test, $(TSTS), echo $(test);)
-	$(CC) $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin -lardutalk
-	$(CC) $(TST)/write.c -o $(TST)/bin/write.bin -lardutalk
-	$(CC) $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin -lardutalk
-	$(CC) $(TST)/stream.c -o $(TST)/bin/stream.bin -lardutalk
+	$(CC) -I$(INC) $(SRC) $(TST)/decEnc.c -o $(TST)/bin/decEnc.bin
+	$(CC) -I$(INC) $(SRC) $(TST)/write.c -o $(TST)/bin/write.bin
+	$(CC) -I$(INC) $(SRC) $(TST)/radioControl.c -o $(TST)/bin/radioControl.bin
+	$(CC) -I$(INC) $(SRC) $(TST)/stream.c -o $(TST)/bin/stream.bin
+	$(CC) -I$(INC) $(SRC) $(TST)/read.c -o $(TST)/bin/read.bin
 #gcc -L$(TST)/lib -I$(INC) $(test) -o $(TST)/bin/$(test).bin -lArduTalk;)
 package:
 	make

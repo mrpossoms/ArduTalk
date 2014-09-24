@@ -36,7 +36,7 @@ int main(){
 	t.rotors[2] = 32;
 	t.rotors[3] = 64;
 
-	int fd = atOpen("/dev/cu.usbserial-A702LY4I", 9600);
+	int fd = atOpen("/dev/cu.usbserial-A702LY4I", 9600, 0);
 	printf("fd %d\n", fd);
 
 	if(fd > 0){

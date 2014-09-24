@@ -31,7 +31,12 @@ int atWrite(int fd, void* src, size_t size){
 	// update serial settings if the message size
 	// has changed since last sent
 	// wait for the bang, and newline
-	if(!AT_IS_BINARY) atPrepare(fd, 2);
+	if(!AT_IS_BINARY){
+		atPrepare(fd, 2);
+#ifdef DEBUG_WRITE
+		printf("atWrite() prepare 2\n");
+#endif
+	}
 
 #ifdef DEBUG_WRITE
 	printf("atWrite() set port settings\n\tabout to encode\n");
@@ -45,13 +50,13 @@ int atWrite(int fd, void* src, size_t size){
 	else memcpy(hex, _src, msgSize);
 
 #ifdef DEBUG_WRITE
-	printf("Writing %zu ", msgSize);
+	printf("Writing >>%zu<<\n", msgSize);
 	write(1, hex, msgSize);
 #endif
 
-	write(fd, hex, msgSize);
+	bytes = write(fd, hex, msgSize);
 #ifdef DEBUG_WRITE
-	printf("atWrite() written\n");
+	printf("atWrite() wrote %d\n", bytes);
 	printf("^^^^^^^^^^^^^^^^^^^^^^^^^\n");
 #endif
 	return bytes;

@@ -6,6 +6,8 @@
 #include <errno.h>
 #include <assert.h>
 
+#define DEBUG_OPEN
+
 struct termios _AT_OLD_CONFIG;
 int _AT_LIB_CONF;
 
@@ -38,21 +40,29 @@ void atConfig(int fd, int flags){
 
 		tcgetattr(fd, &conf);
 		cfmakeraw(&conf);
-		printf("%x\n", conf.c_iflag);
+
+#ifdef DEBUG_OPEN
+		printf("%lx\n", conf.c_iflag);
+#endif
+
 		conf.c_iflag |= IGNBRK;
 		conf.c_cflag |= CLOCAL;
 		// no hardware flow control
 		conf.c_cflag &= ~CRTSCTS;
 		// no software flow control  
 		conf.c_iflag &= ~(IXON | IXOFF | IXANY);
-		printf("%x\n", conf.c_iflag);
+
+#ifdef DEBUG_OPEN
+		printf("%lx\n", conf.c_iflag);
+#endif
+		
 		tcsetattr(fd, TCSANOW, &conf);
 	}
 }
 //---------------------------------------------------------------
 int atOpen(const char* dev, speed_t baud, int flags){
 	int fd = -1;
-	int isBlocking = flags & AT_BLOCKING ? O_NONBLOCK : 0;
+	int isBlocking = flags & AT_BLOCKING ? 0 : O_NONBLOCK;
 	struct termios config = {0};
 
 	printf("atOpen() entered opening %s\n", dev);

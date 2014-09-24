@@ -1,7 +1,7 @@
 #include "ardutalk.h"
 
 int main(){
-	int fd = atOpen("/dev/tty.usbserial-FTGCHM6G", 57600);
+	int fd = atOpen("/dev/tty.usbserial-FTGCHM6G", 57600, 0);
 	int bytes = 1024;
 	atConfig(fd, AT_BIN | AT_NCHKSUM);
 
