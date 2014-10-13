@@ -52,12 +52,12 @@ void atConfig(int fd, int flags){
 //---------------------------------------------------------------
 int atOpen(const char* dev, speed_t baud, int flags){
 	int fd = -1;
-	int isBlocking = flags & AT_BLOCKING ? O_NONBLOCK : 0;
+	int isBlocking = (flags & AT_BLOCKING) ? O_NONBLOCK : 0;
 	struct termios config = {0};
 
-	printf("atOpen() entered opening %s\n", dev);
+	printf("atOpen() entered opening %s with flags %x\n", dev, flags);
 
-	if(isBlocking){
+	if(flags & AT_BLOCKING){
 		printf("Configuring to block\n");
 	}
 
