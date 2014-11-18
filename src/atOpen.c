@@ -68,7 +68,7 @@ int atOpen(const char* dev, speed_t baud, int flags){
 	printf("atOpen() entered opening %s with flags %x\n", dev, flags);
 
 	if(flags & AT_BLOCKING){
-		printf("Configuring to block\n");
+		printf("Configuring to block...\n");
 	}
 
 	// set default behavior for library
