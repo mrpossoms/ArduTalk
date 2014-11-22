@@ -5,7 +5,7 @@
 #include "atChecksum.h"
 #include <stdio.h>
 #include <termios.h>
-#include <strings.h>
+#include <string.h>
 #include <unistd.h>
 #include <assert.h>
 

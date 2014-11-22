@@ -42,7 +42,7 @@ void atConfig(int fd, int flags){
 		cfmakeraw(&conf);
 
 #ifdef DEBUG_OPEN
-		printf("%lx\n", conf.c_iflag);
+		printf("%lx\n", (unsigned long)conf.c_iflag);
 #endif
 
 		conf.c_iflag |= IGNBRK;
@@ -53,7 +53,7 @@ void atConfig(int fd, int flags){
 		conf.c_iflag &= ~(IXON | IXOFF | IXANY);
 
 #ifdef DEBUG_OPEN
-		printf("%lx\n", conf.c_iflag);
+		printf("%lx\n", (unsigned long)conf.c_iflag);
 #endif
 		
 		tcsetattr(fd, TCSANOW, &conf);
