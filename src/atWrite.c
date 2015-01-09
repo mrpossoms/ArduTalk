@@ -45,6 +45,14 @@ int atWrite(int fd, void* src, size_t size){
 	// encode, and write the message
 	memcpy(_src, src, size);
 	
+	if(AT_RXTX_SCRAM){
+		for(int i = size; i--;){
+			if(rand() % 2048 < AT_RXTX_SCRAM){
+				_src[i] = (unsigned char)0xFF & rand();
+			}
+		}
+	}
+
 	if(!AT_IS_NON_CRC) _src[size] = atChecksum(src, size);
 	if(!AT_IS_BINARY) atEncode(_src, size + (AT_IS_NON_CRC ? 0 : CHECKSUM), hex);
 	else memcpy(hex, _src, msgSize);

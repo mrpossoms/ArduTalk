@@ -15,6 +15,8 @@
 extern struct termios _AT_OLD_CONFIG;
 extern int _AT_LIB_CONF;
 
+extern unsigned char AT_RXTX_SCRAM;
+
 int  atOpen(const char* dev, speed_t baud, int flags);
 void atConfig(int fd, int flags);
 

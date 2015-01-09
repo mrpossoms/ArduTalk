@@ -11,6 +11,8 @@
 struct termios _AT_OLD_CONFIG;
 int _AT_LIB_CONF;
 
+unsigned char AT_RXTX_SCRAM;
+
 void _setPortConf(struct termios *conf, int fd, speed_t baud){
 	// set speeds
 	_AT_BAUD = baud;
@@ -64,6 +66,8 @@ int atOpen(const char* dev, speed_t baud, int flags){
 	int fd = -1;
 	int isBlocking = (flags & AT_BLOCKING) ? 0 : O_NONBLOCK;
 	struct termios config = {0};
+
+	AT_RXTX_SCRAM = 0;
 
 	printf("atOpen() entered opening %s with flags %x\n", dev, flags);
 
