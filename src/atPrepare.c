@@ -34,7 +34,7 @@ int atPrepare(int fd, size_t size){
 
 	// specify timeouts
 	if(_AT_LIB_CONF & AT_BLOCKING){
-		conf.c_cc[VTIME] = 20; // two second time-outs
+		//conf.c_cc[VTIME] = 20; // two second time-outs
 	}
 	else{
 		conf.c_cc[VTIME] = (((size << 3) + 1) * 10) / _AT_BAUD;
