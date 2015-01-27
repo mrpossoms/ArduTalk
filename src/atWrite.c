@@ -15,7 +15,7 @@
 //#define DEBUG_WRITE
 
 int atWrite(int fd, void* src, size_t size){
-	int bytes = 0;
+	int bytes, i;
 	size_t msgSize = ((size + CHECKSUM) << 1) + START_SYMBOL + NEW_LINE;
 	char hex[msgSize], _src[size + CHECKSUM];
 	struct termios conf = {0};
@@ -46,7 +46,7 @@ int atWrite(int fd, void* src, size_t size){
 	memcpy(_src, src, size);
 	
 	if(AT_RXTX_SCRAM){
-		for(int i = size; i--;){
+		for(i = size; i--;){
 			if(rand() % 2048 < AT_RXTX_SCRAM){
 				_src[i] = (unsigned char)0xFF & rand();
 			}
