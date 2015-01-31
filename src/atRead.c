@@ -14,6 +14,7 @@
 #define CHECKSUM     1
 
 //#define DEBUG_READ
+#define SEC_2_MICRO_SEC 1000000.0
 
 size_t atAvailable(int fd){
 	size_t bytes = 0;
@@ -33,6 +34,18 @@ int atRead(int fd, void* dst, size_t size){
 	// update serial settings if the message size
 	// has changed since last sent
 	atPrepare(fd, size);
+
+	// inital time out
+	{
+		static struct timeval timeout = { 0, 0.25 * SEC_2_MICRO_SEC }; // 1 second timeout
+		fd_set readFd;
+		FD_ZERO(&readFd);
+		FD_SET(fd, &readFd);
+
+		if(!select(fd + 1, &readFd, NULL, NULL, &timeout)){
+			return -2; // timeout
+		}
+	}
 
 	// read message. wait for a start token, or correct
 	// number of bytes
