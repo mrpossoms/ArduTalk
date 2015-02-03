@@ -37,7 +37,7 @@ int atRead(int fd, void* dst, size_t size){
 
 	// inital time out
 	{
-		static struct timeval timeout = { 0, 0.25 * SEC_2_MICRO_SEC }; // 1 second timeout
+		struct timeval timeout = { 1, 0 }; // 1 second timeout
 		fd_set readFd;
 		FD_ZERO(&readFd);
 		FD_SET(fd, &readFd);
